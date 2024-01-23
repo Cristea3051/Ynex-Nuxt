@@ -26,6 +26,9 @@ export default {
             sortByValue: null,
             sortByOptions: ['Newest', 'Date Added', 'Type', 'A - Z'],
 
+            sortByBoard: null,
+            selectBoard: ['Project1', 'Daily', 'Project2', 'Project3'],
+
             assignToValue: null,
             assignToOptions: ['Angelina May', 'Kiara advain', 'Hercules Jhon', 'Mayor Kim'],
 
@@ -43,19 +46,20 @@ export default {
     <div class="row">
         <div class="col-xl-12">
             <div class="card custom-card">
-                <div class="card-body p-3">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div class="card-body p-2">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap">
                         <div class="row kanban-board">
-                            <div class="col-xl-5">
-                                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#add-board"><i
-                                        class="ri-add-line me-1 fw-semibold align-middle"></i>New Board</button>
-                            </div>
-                            <div class="col-xl-7 mt-2 my-xxl-0">
-                                <VueMultiselect :show-labels="false" v-model="sortByValue" :options="sortByOptions"
-                                    name="choices-single-default" placeholder="Sort By" :multiple="false">
-                                </VueMultiselect>
-                            </div>
+                        <div class="col-xl-5">
+                            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#add-board">
+                                <i class="ri-add-line me-1 fw-semibold align-middle"></i>New Board
+                            </button>
                         </div>
+                        <div class="col-xl-6 mt-2 my-xxl-0">
+                            <VueMultiselect :show-labels="false" v-model="sortByValue" :options="sortByOptions"
+                                name="choices-single-default" placeholder="Sort By" :multiple="false">
+                            </VueMultiselect>
+                        </div>
+                    </div>
                         <div class="avatar-list-stacked">
                             <span class="avatar avatar-rounded">
                                 <img src="/images/faces/2.jpg" alt="img">
@@ -78,6 +82,11 @@ export default {
                             <a class="avatar bg-primary avatar-rounded text-fixed-white" href="javascript:void(0);">
                                 +8
                             </a>
+                        </div>
+                        <div class="col-xl-1 mt-2 my-xxl-0">
+                            <VueMultiselect :show-labels="false" v-model="sortByBoard" :options="selectBoard"
+                                name="choices-single-default" placeholder="Sort By" :multiple="false">
+                            </VueMultiselect>
                         </div>
                         <div class="d-flex" role="search">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
