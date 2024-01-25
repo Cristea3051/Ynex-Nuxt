@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   ],
   // Used to add the base path of url Example : https://www.spruko.com/ynex-nuxt
   app: {
-    baseURL: '/nuxt/preview', // Replace with your desired base path
+    baseURL: '/', // Replace with your desired base path
     head: {
       link: [{ rel: 'icon', type: 'image/x-icon', href: "/nuxt/preview/favicon.ico" }]
   },
