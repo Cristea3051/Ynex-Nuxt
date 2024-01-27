@@ -694,6 +694,24 @@ export let menuData = [
         ]
     },
     {
+        type: 'sub',
+        title: 'Users',
+        icon: 'bx bx-error',
+        selected: false,
+        active: false,
+        dirchange: false,
+        children: [
+            {
+                path: '/users/AllUsers',
+                type: 'link',
+                title: 'All Users',
+                selected: false,
+                active: false,
+                dirchange: false,
+            },
+        ]
+    },
+    {
         menuTitle: 'GENERAL'
     },
     {
