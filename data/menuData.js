@@ -1759,4 +1759,14 @@ export let menuData = [
         active: false,
         dirchange: false,
     },
+    {
+        path: '/test',
+        type: 'link',
+        icon: 'bx bx-store-alt',
+        title: 'Test',
+        selected: false,
+        active: false,
+        dirchange: false,
+    },
+
 ];
