@@ -12,7 +12,7 @@ const getImagePath = (imageName: any) => {
   return `${publicPath}${imageName}`;
 }
 useHead({
-  title: ' YNEX - Nuxt3 Premium Admin & Dashboard Template ',
+  title: ' YNEX ',
   link: [{ rel: 'icon', type: 'image/png', href: getImagePath('images/brand-logos/favicon.ico') }]
 })
 </script>

@@ -117,6 +117,7 @@ export default {
             <PerfectScrollbar class="kanban-tasks" id="new-tasks">
                 <draggable group="people" itemKey="name" id="new-tasks-draggable" data-view-btn="new-tasks">
                     <div class="card custom-card">
+                        <router-link :to="{ name: 'task-details'}">
                         <div class="card-body p-0">
                             <div class="p-3 kanban-board-head">
                                 <div class="d-flex text-muted justify-content-between mb-1 fs-12 fw-semibold">
@@ -182,6 +183,7 @@ export default {
                                 </div>
                             </div>
                         </div>
+                    </router-link>
                     </div>
                     <div class="card custom-card">
                         <div class="card-body p-0">
