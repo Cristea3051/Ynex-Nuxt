@@ -1,6 +1,8 @@
 <script lang="ts">
 import PageHeader from "@/components/common/pageheader.vue";
 import { VueDraggableNext } from 'vue-draggable-next';
+
+import { KanbanBoard, KanbanBoard1, KanbanBoard2, KanbanBoard3, KanbanBoard4 } from "@/data/kanban.js";
 import kanbanCardComponent from "@/components/@spk/task/kanban-board-cards.vue";
 
 export default {
@@ -8,8 +10,7 @@ export default {
         definePageMeta({
             middleware: ["auth"],
         });
-        const picked = ref(new Date());
-        return { picked };
+        const picked = ref(new Date()); return { picked }
     },
     components: {
         PageHeader,
@@ -18,42 +19,26 @@ export default {
     },
     data() {
         return {
-            isLoading: true, // Starea de încărcare
-            dataToPass: {},
+            dataToPass: {
+                current: "Kanban Board",
+                list: [
+                    'Task', 'Kanban Board'
+                ]
+            },
             sortByValue: null,
-            sortByOptions: [],
-            assignToValue: null,
-            assignToOptions: [],
-            tagsValue: null,
-            tagsOptions: [],
-            KanbanBoard: [],
-            KanbanBoard1: [],
-            KanbanBoard2: [],
-            KanbanBoard3: [],
-            KanbanBoard4: [],
-        };
-    },
-    async created() { // Folosim created în loc de fetch pentru Nuxt 2, sau fetch pentru Nuxt 3
-        try {
-            const response = await fetch('/data/kanbanConfig.json');
-            const config = await response.json();
-            console.log('JSON loaded:', config); // Debug
+            sortByOptions: ['Newest', 'Date Added', 'Type', 'A - Z'],
 
-            // Populează datele
-            this.dataToPass = config.dataToPass;
-            this.sortByOptions = config.sortByOptions;
-            this.assignToOptions = config.assignToOptions;
-            this.tagsOptions = config.tagsOptions;
-            this.KanbanBoard = config.kanbanBoards.KanbanBoard || [];
-            this.KanbanBoard1 = config.kanbanBoards.KanbanBoard1 || [];
-            this.KanbanBoard2 = config.kanbanBoards.KanbanBoard2 || [];
-            this.KanbanBoard3 = config.kanbanBoards.KanbanBoard3 || [];
-            this.KanbanBoard4 = config.kanbanBoards.KanbanBoard4 || [];
-        } catch (error) {
-            console.error('Error loading JSON:', error);
-        } finally {
-            this.isLoading = false; // Datele sunt gata
-        }
+            assignToValue: null,
+            assignToOptions: ['Angelina May', 'Kiara advain', 'Hercules Jhon', 'Mayor Kim'],
+
+            tagsValue: null,
+            tagsOptions: ['Admin', 'Authentication', 'Designing', 'Development', 'Finance', 'Marketing', 'Product', 'UI/UX'],
+            KanbanBoard,
+            KanbanBoard1,
+            KanbanBoard2,
+            KanbanBoard3,
+            KanbanBoard4,
+        };
     },
     methods: {
         onDragStart(event: any) { },
@@ -63,12 +48,7 @@ export default {
 </script>
 
 <template>
-   <div v-if="isLoading">
-        <p>Loading Kanban data...</p>
-    </div>
-    <div v-else>
-        <PageHeader :propData="dataToPass" />
-    </div>
+    <PageHeader :propData="dataToPass" />
 
     <!-- Start:: row-1 -->
     <div class="row">
@@ -122,88 +102,140 @@ export default {
     </div>
     <!-- End:: row-1 -->
 
-  <!-- Start::row-2 -->
-        <div class="ynex-kanban-board">
-            <div class="kanban-tasks-type new">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="d-block fw-semibold fs-15">NEW - {{ KanbanBoard.length }}</span>
-                        <div>
-                            <a aria-label="anchor" href="javascript:void(0)" class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal" data-bs-target="#add-task">
-                                <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
-                            </a>
-                        </div>
+    <!-- Start::row-2 -->
+    <div class="ynex-kanban-board">
+        <div class="kanban-tasks-type new">
+            <div class=" mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="d-block fw-semibold fs-15">NEW - 04</span>
+                    <div>
+                        <a aria-label="anchor" href="javascript:void(0)"
+                            class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal"
+                            data-bs-target="#add-task">
+                            <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
+                        </a>
                     </div>
-                </div>
-                <PerfectScrollbar class="kanban-tasks" id="new-tasks">
-                    <div id="new-tasks-draggable" data-view-btn="new-tasks" class="task-Null" v-if="KanbanBoard.length === 0">
-                        No tasks yet
-                    </div>
-                    <draggable group="people" itemKey="name" id="new-tasks-draggable" data-view-btn="new-tasks"
-                        v-model="KanbanBoard" @start="onDragStart" @end="onDragEnd">
-                        <kanbanCardComponent v-for="(card, index) in KanbanBoard" :key="index" cardBodyClass="p-0"
-                            kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
-                    </draggable>
-                </PerfectScrollbar>
-                <div class="d-grid view-more-button mt-3" v-if="KanbanBoard.length">
-                    <button class="btn btn-primary-light btn-wave">View More</button>
                 </div>
             </div>
-            <!-- Repetă pentru KanbanBoard1, KanbanBoard2, etc., ajustând titlurile -->
-            <div class="kanban-tasks-type todo">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="d-block fw-semibold fs-15">TODO - {{ KanbanBoard1.length }}</span>
-                        <div>
-                            <a aria-label="anchor" href="javascript:void(0)" class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal" data-bs-target="#add-task">
-                                <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <PerfectScrollbar class="kanban-tasks" id="todo-tasks">
-                    <div id="todo-tasks-draggable" data-view-btn="todo-tasks" class="task-Null" v-if="KanbanBoard1.length === 0">
-                        No tasks yet
-                    </div>
-                    <draggable group="people" itemKey="name" id="todo-tasks-draggable" data-view-btn="todo-tasks"
-                        v-model="KanbanBoard1" @start="onDragStart" @end="onDragEnd">
-                        <kanbanCardComponent v-for="(card, index) in KanbanBoard1" :key="index" cardBodyClass="p-0"
-                            kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
-                    </draggable>
-                </PerfectScrollbar>
-                <div class="d-grid view-more-button mt-3" v-if="KanbanBoard1.length">
-                    <button class="btn btn-primary-light btn-wave">View More</button>
-                </div>
+            <PerfectScrollbar class="kanban-tasks" id="new-tasks">
+                <div id="new-tasks-draggable" data-view-btn="new-tasks" class="task-Null"
+                    v-if="KanbanBoard.length === 0"></div>
+                <draggable group="people" itemKey="name" id="new-tasks-draggable" data-view-btn="new-tasks"
+                    v-model="KanbanBoard" @start="onDragStart" @end="onDragEnd">
+                    <kanbanCardComponent v-for="(card, index) in KanbanBoard" :key="index" cardBodyClass="p-0"
+                        kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
+                </draggable>
+            </PerfectScrollbar>
+            <div class="d-grid view-more-button mt-3" v-if="KanbanBoard.length">
+                <button class="btn btn-primary-light btn-wave">View More</button>
             </div>
-
-            <div class="kanban-tasks-type todo">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="d-block fw-semibold fs-15">IN DEVELOPEMENT - {{ KanbanBoard1.length }}</span>
-                        <div>
-                            <a aria-label="anchor" href="javascript:void(0)" class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal" data-bs-target="#add-task">
-                                <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <PerfectScrollbar class="kanban-tasks" id="todo-tasks">
-                    <div id="todo-tasks-draggable" data-view-btn="todo-tasks" class="task-Null" v-if="KanbanBoard1.length === 0">
-                        No tasks yet
-                    </div>
-                    <draggable group="people" itemKey="name" id="todo-tasks-draggable" data-view-btn="todo-tasks"
-                        v-model="KanbanBoard1" @start="onDragStart" @end="onDragEnd">
-                        <kanbanCardComponent v-for="(card, index) in KanbanBoard1" :key="index" cardBodyClass="p-0"
-                            kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
-                    </draggable>
-                </PerfectScrollbar>
-                <div class="d-grid view-more-button mt-3" v-if="KanbanBoard1.length">
-                    <button class="btn btn-primary-light btn-wave">View More</button>
-                </div>
-            </div>
-            
         </div>
-        <!-- End::row-2 -->
+        <div class="kanban-tasks-type todo">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="d-block fw-semibold fs-15">TODO - 36</span>
+                    <div>
+                        <a aria-label="anchor" href="javascript:void(0)"
+                            class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal"
+                            data-bs-target="#add-task">
+                            <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <PerfectScrollbar class="kanban-tasks" id="todo-tasks">
+                <div id="todo-tasks-draggable" data-view-btn="todo-tasks" class="task-Null"
+                    v-if="KanbanBoard1.length === 0"></div>
+                <draggable group="people" itemKey="name" id="todo-tasks-draggable" data-view-btn="todo-tasks"
+                    v-model="KanbanBoard1" @start="onDragStart" @end="onDragEnd">
+                    <kanbanCardComponent v-for="(card, index) in KanbanBoard1" :key="index" cardBodyClass="p-0"
+                        kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
+                </draggable>
+            </PerfectScrollbar>
+            <div class="d-grid view-more-button mt-3" v-if="KanbanBoard1.length">
+                <button class="btn btn-primary-light btn-wave">View More</button>
+            </div>
+        </div>
+        <div class="kanban-tasks-type in-progress">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="d-block fw-semibold fs-15">ON GOING - 25</span>
+                    <div>
+                        <a aria-label="anchor" href="javascript:void(0)"
+                            class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal"
+                            data-bs-target="#add-task">
+                            <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <PerfectScrollbar class="kanban-tasks" id="inprogress-tasks">
+                <div id="inprogress-tasks-draggable" data-view-btn="inprogress-tasks" class="task-Null"
+                    v-if="KanbanBoard2.length === 0"></div>
+                <draggable group="people" itemKey="name" id="inprogress-tasks-draggable"
+                    data-view-btn="inprogress-tasks" v-model="KanbanBoard2" @start="onDragStart" @end="onDragEnd">
+                    <kanbanCardComponent v-for="(card, index) in KanbanBoard2" :key="index" cardBodyClass="p-0"
+                        kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
+                </draggable>
+            </PerfectScrollbar>
+            <div class="d-grid view-more-button mt-3" v-if="KanbanBoard2.length">
+                <button class="btn btn-primary-light btn-wave">View More</button>
+            </div>
+        </div>
+        <div class="kanban-tasks-type inreview">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="d-block fw-semibold fs-15">IN REVIEW - 02</span>
+                    <div>
+                        <a aria-label="anchor" href="javascript:void(0)"
+                            class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal"
+                            data-bs-target="#add-task">
+                            <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <PerfectScrollbar class="kanban-tasks" id="inreview-tasks">
+                <div id="inreview-tasks-draggable" data-view-btn="inreview-tasks" class="task-Null"
+                    v-if="KanbanBoard3.length === 0"></div>
+                <draggable group="people" itemKey="name" id="inreview-tasks-draggable" data-view-btn="inreview-tasks"
+                    v-model="KanbanBoard3" @start="onDragStart" @end="onDragEnd">
+                    <kanbanCardComponent v-for="(card, index) in KanbanBoard3" :key="index" cardBodyClass="p-0"
+                        kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
+                </draggable>
+            </PerfectScrollbar>
+            <div class="d-grid view-more-button mt-3" v-if="KanbanBoard3.length">
+                <button class="btn btn-primary-light btn-wave">View More</button>
+            </div>
+        </div>
+        <div class="kanban-tasks-type completed">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="d-block fw-semibold fs-15">COMPLETED - 36</span>
+                    <div>
+                        <a aria-label="anchor" href="javascript:void(0)"
+                            class="btn btn-sm bg-white text-default border-0 btn-wave" data-bs-toggle="modal"
+                            data-bs-target="#add-task">
+                            <i class="ri-add-line align-middle me-1 fw-semibold"></i>Add Task
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <PerfectScrollbar class="kanban-tasks" id="completed-tasks">
+                <div id="completed-tasks-draggable" data-view-btn="completed-tasks" class="task-Null"
+                    v-if="KanbanBoard4.length === 0"></div>
+                <draggable group="people" itemKey="name" id="completed-tasks-draggable" data-view-btn="completed-tasks"
+                    v-model="KanbanBoard4" @start="onDragStart" @end="onDragEnd">
+                    <kanbanCardComponent v-for="(card, index) in KanbanBoard4" :key="index" cardBodyClass="p-0"
+                        kanbanHeadClass="p-3 kanban-board-head" :showIcon="false" :card="card" />
+                </draggable>
+            </PerfectScrollbar>
+            <div class="d-grid view-more-button mt-3" v-if="KanbanBoard4.length">
+                <button class="btn btn-primary-light btn-wave">View More</button>
+            </div>
+        </div>
+    </div>
+    <!--End::row-2 -->
 
     <!-- Start::add board modal -->
     <div class="modal fade" id="add-board" tabindex="-1" aria-hidden="true">
