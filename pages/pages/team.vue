@@ -51,7 +51,7 @@ export default {
           { name: "github", links: "", icon: "github", iconColor: "success" },
           { name: "youtube", links: "", icon: "youtube", iconColor: "danger" },
         ] },
-        // ... restul obiectelor din teams (le-am păstrat neschimbate)
+  
         { id: 9, color: "fixed-white", name: "Elisha Jin", email: "elishajin@gmail.com", since: "4 Years", projects: "321", position: "Manager", coverImg: cover9, src: face15, socialMedia: [
           { name: "facebook", links: "", icon: "facebook", iconColor: "primary" },
           { name: "twitter", links: "", icon: "twitter-x", iconColor: "secondary" },
@@ -63,13 +63,24 @@ export default {
       teamMembers: [
         { menuTitle: "TEAM UI" },
         { name: "Angelica Hale", img: face3, status: "" },
-        // ... restul obiectelor din teamMembers (le-am păstrat neschimbate)
+        { name: "Ariana Grande", img: face4, status: "2 hr" },
+        { name: "Ava Max", img: face5, status: "1 hr" },
+        { name: "Billie Eilish", img: face6, status: "" },
+        { name: "Bebe Rexha", img: face7, status: "" },
+        { menuTitle: "TEAM REACT" },
+        { name: "Camila Cabello", img: face8, status: "" },
+        { name: "Demi Lovato", img: face9, status: "" },
+        { name: "Dua Lipa", img: face10, status: "" },
+        { name: "Gigi Hadid", img: face12, status: "" },
+        { name: "Halsey", img: face13, status: "" },
+        { menuTitle: "TEAM TESTING" },
+        { name: "Katy Perry", img: face14, status: "" },  
         { name: "Kiara Advensh", img: face1, status: "1 hr" }
       ]
     };
   },
   mounted() {
-  const apiUrl = 'http://127.0.0.1:8001/api/users/';
+  const apiUrl = 'http://127.0.0.1:8000/api/users/';
   axios.get(apiUrl)
     .then((response) => {
       this.apiData = response.data.data; 
