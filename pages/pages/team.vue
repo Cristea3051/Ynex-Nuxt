@@ -168,7 +168,7 @@ const calculateSince = (createdAt) => {
   return months > 12 ? `${Math.floor(months / 12)} Years` : `${months} Months`;
 };
 
-// Fetch și prelucrare date teste la fetch
+// Fetch și prelucrare date teste la fetchcsdsakjnjkfdngfd
 onMounted(async () => {
   const apiUrl = 'https://67f6b48742d6c71cca6304c4.mockapi.io/api/v1/users/';
   try {
