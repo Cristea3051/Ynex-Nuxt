@@ -1,115 +1,5 @@
-<script lang="ts">
-import axios from 'axios';
-import PageHeader from "@/components/common/pageheader.vue";
-import TeamsCardComponent from '@/components/@spk/teams-cards.vue';
-import cover1 from "/images/media/team-covers/1.jpg";
-import cover2 from "/images/media/team-covers/2.jpg";
-import cover3 from "/images/media/team-covers/3.jpg";
-import cover4 from "/images/media/team-covers/4.jpg";
-import cover5 from "/images/media/team-covers/5.jpg";
-import cover6 from "/images/media/team-covers/6.jpg";
-import cover7 from "/images/media/team-covers/7.jpg";
-import cover8 from "/images/media/team-covers/8.jpg";
-import cover9 from "/images/media/team-covers/9.jpg";
-import face15 from "/images/faces/15.jpg";
-import face5 from "/images/faces/5.jpg";
-import face10 from "/images/faces/10.jpg";
-import face13 from "/images/faces/13.jpg";
-import face11 from "/images/faces/11.jpg";
-import face14 from "/images/faces/14.jpg";
-import face12 from "/images/faces/12.jpg";
-import face2 from "/images/faces/2.jpg";
-import face3 from "/images/faces/3.jpg";
-import face8 from "/images/faces/8.jpg";
-import face9 from "/images/faces/9.jpg";
-import face6 from "/images/faces/6.jpg";
-import face4 from "/images/faces/4.jpg";
-import face1 from "/images/faces/1.jpg";
-import face16 from "/images/faces/10.jpg";
-import face7 from "/images/faces/7.jpg";
-
-export default {
-  name: 'Team',
-  components: {
-    PageHeader,
-    TeamsCardComponent
-  },
-  data() {
-    return {
-      apiData: null, // Datele de la API, inițial null
-      dataToPass: {
-        current: "Team",
-        list: ['Pages', 'Team']
-      },
-      teamLimitValue: null,
-      teamLimitOptions: [10, 20, 30],
-      teams: [
-        { id: 1, color: "warning", name: "Alexander Smith", email: "alexandersmith2135@gmail.com", since: "16 Months", projects: "45", position: "Member", coverImg: cover1, src: face11, socialMedia: [
-          { name: "facebook", links: "", icon: "facebook", iconColor: "primary" },
-          { name: "twitter", links: "", icon: "twitter-x", iconColor: "secondary" },
-          { name: "instagram", links: "", icon: "instagram", iconColor: "warning" },
-          { name: "github", links: "", icon: "github", iconColor: "success" },
-          { name: "youtube", links: "", icon: "youtube", iconColor: "danger" },
-        ] },
-  
-        { id: 9, color: "fixed-white", name: "Elisha Jin", email: "elishajin@gmail.com", since: "4 Years", projects: "321", position: "Manager", coverImg: cover9, src: face15, socialMedia: [
-          { name: "facebook", links: "", icon: "facebook", iconColor: "primary" },
-          { name: "twitter", links: "", icon: "twitter-x", iconColor: "secondary" },
-          { name: "instagram", links: "", icon: "instagram", iconColor: "warning" },
-          { name: "github", links: "", icon: "github", iconColor: "success" },
-          { name: "youtube", links: "", icon: "youtube", iconColor: "danger" },
-        ] },
-      ],
-      teamMembers: [
-        { menuTitle: "TEAM UI" },
-        { name: "Angelica Hale", img: face3, status: "" },
-        { name: "Ariana Grande", img: face4, status: "2 hr" },
-        { name: "Ava Max", img: face5, status: "1 hr" },
-        { name: "Billie Eilish", img: face6, status: "" },
-        { name: "Bebe Rexha", img: face7, status: "" },
-        { menuTitle: "TEAM REACT" },
-        { name: "Camila Cabello", img: face8, status: "" },
-        { name: "Demi Lovato", img: face9, status: "" },
-        { name: "Dua Lipa", img: face10, status: "" },
-        { name: "Gigi Hadid", img: face12, status: "" },
-        { name: "Halsey", img: face13, status: "" },
-        { menuTitle: "TEAM TESTING" },
-        { name: "Katy Perry", img: face14, status: "" },  
-        { name: "Kiara Advensh", img: face1, status: "1 hr" }
-      ]
-    };
-  },
-  mounted() {
-  const apiUrl = 'http://127.0.0.1:8000/api/users/';
-  axios.get(apiUrl)
-    .then((response) => {
-      this.apiData = response.data.data; 
-    })
-    .catch((error) => {
-      console.error('Eroare la fetch:', error);
-    });
-},
-  setup() {
-    definePageMeta({
-      middleware: ["auth"],
-    });
-  }
-};
-</script>
-
 <template>
   <div>
-    <div>
-    <h1>Fetched Data:</h1>
-    <ul v-if="apiData">
-      <li v-for="item in apiData" :key="item.id">
-        {{ item.firstName }} {{ item.lastName }} ({{ item.username }})
-      </li>
-    </ul>
-    <p v-else>Loading...</p>
-  </div>
-
-    <!-- Restul template-ului existent -->
     <div class="row mt-4">
       <div class="col-xl-9">
         <div class="team-members" id="team-members">
@@ -141,8 +31,15 @@ export default {
                 </div>
               </div>
             </div>
-            <div class="col-xxl-4 col-xl-6 col-lg-6 col-md-6 col-sm-12" v-for="item in apiData" :key="item.id">
-              <TeamsCardComponent customCardClass="team-member-card" coverSrcClass="card-img-top" :card="item" starIcon="ri-star-fill fs-16" cardBodyClass="p-0" :showDropdown="true" cardFooterClass="border-block-start-dashed text-center" />
+            <div class="col-xxl-4 col-xl-6 col-lg-6 col-md-6 col-sm-12" v-for="item in processedApiData" :key="item.id">
+              <TeamsCardComponent 
+                customCardClass="team-member-card" 
+                coverSrcClass="card-img-top" 
+                :card="item" 
+                starIcon="ri-star-fill fs-16" 
+                cardBodyClass="p-0" 
+                :showDropdown="true" 
+                cardFooterClass="border-block-start-dashed text-center" />
             </div>
             <nav aria-label="...">
               <ul class="pagination justify-content-end">
@@ -157,78 +54,7 @@ export default {
         </div>
       </div>
       <div class="col-xl-3">
-        <div class="team-groups">
-          <div class="card custom-card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <h6 class="fw-semibold mb-0">All Teams</h6>
-              <div>
-                <button class="btn btn-sm btn-primary-light" data-bs-toggle="modal" data-bs-target="#create-team">Create Team<i class="ri-add-line ms-1 align-middle"></i></button>
-                <div class="modal fade" id="create-team" tabindex="-1">
-                  <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h6 class="modal-title" id="create-teamLabel">Create Team</h6>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body px-4">
-                        <div class="row gy-3">
-                          <div class="col-xl-12">
-                            <label for="team-name" class="form-label">Team Name</label>
-                            <input type="text" class="form-control" id="team-name" placeholder="Enter Name">
-                          </div>
-                          <div class="col-xl-12">
-                            <label class="form-label">Maximum Team Limit</label>
-                            <VueMultiselect :searchable="false" :show-labels="false" v-model="teamLimitValue" :options="teamLimitOptions" :multiple="false" placeholder="Choose Limit"></VueMultiselect>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-sm btn-primary">Create</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card-body p-0">
-              <PerfectScrollbar>
-                <div class="teams-nav" id="teams-nav">
-                  <ul class="list-unstyled mb-0 mt-2">
-                    <li v-for="(member, key) in teamMembers" :key="key">
-                      <div v-if="member.menuTitle" class="d-flex justify-content-between align-items-center">
-                        <div class="fs-10 fw-semibold mb-2 text-muted">{{ member.menuTitle }}</div>
-                        <div>
-                          <v-tooltip activator="parent" location="top">Add Member</v-tooltip>
-                          <button class="btn btn-icon btn-sm btn-success-light btn-wave" data-bs-toggle="modal" data-bs-target="#create-teamui-mem"><i class="ri-add-line"></i></button>
-                        </div>
-                      </div>
-                      <a v-if="!member.menuTitle" href="javascript:void(0);">
-                        <div class="d-flex align-items-center">
-                          <div class="me-2 d-flex align-items-center">
-                            <span class="avatar avatar-sm avatar-rounded online">
-                              <img :src="member.img" alt="">
-                            </span>
-                          </div>
-                          <div class="flex-fill">
-                            <span>{{ member.name }}</span>
-                          </div>
-                          <div>
-                            <span class="fs-10 fw-semibold text-muted">{{ member.status }}</span>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </PerfectScrollbar>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Start:: add-members modals -->
+        <!-- Start:: add-members modals -->
     <div class="modal fade" id="create-teamui-mem" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -303,7 +129,70 @@ export default {
     </div>
     <!-- End:: team testing modal -->
     <!-- End:: add-members modals -->
+      </div>
+    </div>
+    <!-- Modalele tale rămân neschimbate -->
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import TeamsCardComponent from '@/components/@spk/teams-cards.vue';
+import cover1 from "/images/media/team-covers/1.jpg"; // Exemplu static
+import face1 from "/images/faces/1.jpg"; // Exemplu static
+
+// Middleware Nuxt
+definePageMeta({
+  middleware: ["auth"],
+});
+
+// Variabile reactive
+const apiData = ref(null);
+const processedApiData = ref([]);
+
+// Social media static (pentru că nu e în API)
+const defaultSocialMedia = [
+  { name: "facebook", links: "", icon: "facebook", iconColor: "primary" },
+  { name: "twitter", links: "", icon: "twitter-x", iconColor: "secondary" },
+  { name: "instagram", links: "", icon: "instagram", iconColor: "warning" },
+  { name: "github", links: "", icon: "github", iconColor: "success" },
+  { name: "youtube", links: "", icon: "youtube", iconColor: "danger" },
+];
+
+// Funcție pentru a calcula "since" din created_at
+const calculateSince = (createdAt) => {
+  const now = new Date();
+  const created = new Date(createdAt);
+  const months = Math.floor((now - created) / (1000 * 60 * 60 * 24 * 30));
+  return months > 12 ? `${Math.floor(months / 12)} Years` : `${months} Months`;
+};
+
+// Fetch și prelucrare date
+onMounted(async () => {
+  const apiUrl = 'https://67f6b48742d6c71cca6304c4.mockapi.io/api/v1/users/';
+  try {
+    const response = await axios.get(apiUrl);
+    console.log('API Response:', response.data);
+    apiData.value = response.data;
+
+    // Prelucrăm datele pentru TeamsCardComponent
+    processedApiData.value = response.data.map(user => ({
+      id: user.id,
+      color: user.roleId === 2 ? "fixed-white" : "warning", // Manager vs Member
+      name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username,
+      email: user.email || 'N/A',
+      since: user.created_at ? calculateSince(user.created_at) : 'Unknown',
+      projects: user.projects || 'N/A', // Dacă adaugi câmpul în MockAPI
+      position: user.roleId === 2 ? 'Manager' : 'Member',
+      coverImg: user.coverImg || cover1, // Static fallback
+      src: user.avatar || face1, // Folosim avatar sau fallback
+      socialMedia: user.socialMedia || defaultSocialMedia, // Static fallback
+    }));
+  } catch (error) {
+    console.error('Eroare la fetch:', error);
+  }
+});
+</script>
 
 <style scoped></style>
