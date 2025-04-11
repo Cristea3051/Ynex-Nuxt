@@ -490,7 +490,7 @@ const nextPage = () => {
   }
 };
 
-// Funcție pentru a calcula "since"
+// Funcție pentru a calcula "since" sdsdsds
 const calculateSince = (createdAt: string) => {
   const now = new Date();
   const created = new Date(createdAt);
