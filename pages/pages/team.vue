@@ -334,7 +334,7 @@ const defaultSocialMedia = [
   { name: 'youtube', links: '', icon: 'youtube', iconColor: 'danger' },
 ];
 
-// Date statice din array-ul `teams` (rămân neschimbate)
+// Date statice din array-ul `teams` (rămân neschimbate) testsdsads
 const staticTeams: TeamMember[] = [
   {
     id: 1,
