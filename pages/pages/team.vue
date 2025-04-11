@@ -324,7 +324,7 @@ const teamLimitValue = ref<number | null>(null);
 const teamLimitOptions = [10, 20, 30];
 const searchQuery = ref<string>(''); // Adăugăm căutarea
 const currentPage = ref<number>(1); // Pagina curentă
-const itemsPerPage = 10; // Număr de elemente pe pagină
+const itemsPerPage = 9; // Număr de elemente pe pagină
 
 const defaultSocialMedia = [
   { name: 'facebook', links: '', icon: 'facebook', iconColor: 'primary' },
