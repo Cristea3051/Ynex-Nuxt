@@ -44,7 +44,6 @@
                 </div>
               </div>
             </div>
-            <!-- Afișăm cardurile din paginatedTeamData -->
             <div
               class="col-xxl-4 col-xl-6 col-lg-6 col-md-6 col-sm-12"
               v-for="item in paginatedTeamData"
@@ -274,27 +273,18 @@ import VueMultiselect from 'vue-multiselect';
 import cover1 from '/images/media/team-covers/1.jpg';
 import face1 from '/images/faces/1.jpg';
 import face2 from '/images/faces/2.jpg';
-import face3 from '/images/faces/3.jpg';
 import face4 from '/images/faces/4.jpg';
 import face5 from '/images/faces/5.jpg';
-import face6 from '/images/faces/6.jpg';
-import face7 from '/images/faces/7.jpg';
 import face8 from '/images/faces/8.jpg';
-import face9 from '/images/faces/9.jpg';
 import face10 from '/images/faces/10.jpg';
 import face11 from '/images/faces/11.jpg';
-import face12 from '/images/faces/12.jpg';
 import face13 from '/images/faces/13.jpg';
-import face14 from '/images/faces/14.jpg';
 import face15 from '/images/faces/15.jpg';
-import face16 from '/images/faces/16.jpg';
 
-// Middleware Nuxt
 definePageMeta({
   middleware: ['auth'],
 });
 
-// Interfață pentru tipizarea utilizatorilor din lista principală
 interface TeamMember {
   id: number;
   color: string;
