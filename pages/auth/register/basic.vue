@@ -3,6 +3,10 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import passwordInput from '@/components/UI/passwordInput.vue';
 
+definePageMeta({
+  layout: 'custom',
+})
+
 const router = useRouter();
 
 const name = ref('');
@@ -52,7 +56,7 @@ const submitForm = async () => {
     }
 
     loading.value = false;
-    router.push('/authentication/sign-in/basic');
+    router.push('/auth/register/basic');
 
   } catch (e) {
     errorMsg.value = 'Network or server error.';
