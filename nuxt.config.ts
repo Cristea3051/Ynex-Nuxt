@@ -52,5 +52,7 @@ export default defineNuxtConfig({
     define: {
       'import.meta.env.googleMapsApiKey': JSON.stringify('AIzaSy...')
     }
-  }
+  },
+
+  compatibilityDate: '2025-07-25'
 })
