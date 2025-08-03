@@ -14,33 +14,44 @@ const login = async () => {
   console.log('[AUTH] Începem autentificarea...')
 
   try {
-const response = await fetch('http://localhost:8080/login', {
-  method: 'POST',
-  body: new URLSearchParams({
-    username: email.value,
-    password: password.value,
-  }).toString(),
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-})
+    console.log('email:', email.value)
+console.log('parola:', password.value)
+    const response = await fetch('http://localhost:8080/login', {
+      method: 'POST',
+      body: new URLSearchParams({
+        username: email.value,
+        password: password.value,
+      }).toString(),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      credentials: 'include', 
+    })
 
     console.log('[AUTH] Răspuns primit:', response)
 
-const text = await response.text();
-console.log('[AUTH] Raw text:', text);
-    const data = text ? JSON.parse(text) : {}
-    if (!response.ok || !data.token) {
-      console.warn('[AUTH] Autentificare eșuată:', data.message || 'Login failed.')
-      errorMsg.value = data.message || 'Email sau parolă incorecte.'
+    const text = await response.text()
+    console.log('[AUTH] Raw text:', text)
+
+    const data = (() => {
+      try {
+        return JSON.parse(text)
+      } catch {
+        return {}
+      }
+    })()
+
+    if (!response.ok) {
+      console.warn('[AUTH] Autentificare eșuată:', data.error || 'Login failed.')
+      errorMsg.value = data.error || 'Email sau parolă incorecte.'
       loading.value = false
       return
     }
 
-    console.info('[AUTH] Autentificare reușită. Token:', data.token)
-    useCookie('token').value = data.token
+    console.info('[AUTH] Autentificare reușită. Sesiune activă.')
     loading.value = false
+    router.push('/dashboard/crm') // ✅ redirecție manuală în frontend
 
-    console.log('[AUTH] Redirecționez către homepage...')
-    router.push('/')
   } catch (error) {
     console.error('[AUTH] Eroare de rețea sau server:', error)
     errorMsg.value = 'Eroare de rețea sau server. Încearcă mai târziu.'
@@ -52,6 +63,7 @@ definePageMeta({
   layout: 'custom',
 })
 </script>
+
 
 <template>
   <div class="container">
