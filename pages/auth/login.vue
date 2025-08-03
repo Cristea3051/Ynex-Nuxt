@@ -1,49 +1,56 @@
 <script setup lang="ts">
-import passwordInput from '@/components/UI/passwordInput.vue'
 import { ref } from 'vue'
+import passwordInput from '~/components/UI/passwordInput.vue'
 import { useRouter } from 'vue-router'
-import { useCookie } from '#app'
-
-const router = useRouter()
-const email = ref('')
-const password = ref('')
 const errorMsg = ref('')
 const loading = ref(false)
-
-definePageMeta({
-  layout: 'custom',
-})
+const email = ref('')
+const password = ref('')
+const router = useRouter()
 
 const login = async () => {
   errorMsg.value = ''
   loading.value = true
+  console.log('[AUTH] Începem autentificarea...')
 
   try {
-    const response = await fetch('http://localhost:8080/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: email.value,
-        password: password.value,
-      }),
-    })
+const response = await fetch('http://localhost:8080/login', {
+  method: 'POST',
+  body: new URLSearchParams({
+    username: email.value,
+    password: password.value,
+  }).toString(),
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+})
 
-    const data = await response.json()
+    console.log('[AUTH] Răspuns primit:', response)
 
+const text = await response.text();
+console.log('[AUTH] Raw text:', text);
+    const data = text ? JSON.parse(text) : {}
     if (!response.ok || !data.token) {
-      errorMsg.value = data.message || 'Login failed.'
+      console.warn('[AUTH] Autentificare eșuată:', data.message || 'Login failed.')
+      errorMsg.value = data.message || 'Email sau parolă incorecte.'
       loading.value = false
       return
     }
 
+    console.info('[AUTH] Autentificare reușită. Token:', data.token)
     useCookie('token').value = data.token
     loading.value = false
+
+    console.log('[AUTH] Redirecționez către homepage...')
     router.push('/')
   } catch (error) {
-    errorMsg.value = 'Server error or network issue.'
+    console.error('[AUTH] Eroare de rețea sau server:', error)
+    errorMsg.value = 'Eroare de rețea sau server. Încearcă mai târziu.'
     loading.value = false
   }
 }
+
+definePageMeta({
+  layout: 'custom',
+})
 </script>
 
 <template>
