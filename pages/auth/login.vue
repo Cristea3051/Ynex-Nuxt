@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import passwordInput from '~/components/UI/passwordInput.vue'
 import { useRouter } from 'vue-router'
+
 const errorMsg = ref('')
 const loading = ref(false)
 const email = ref('')
@@ -14,43 +15,35 @@ const login = async () => {
   console.log('[AUTH] Începem autentificarea...')
 
   try {
-    console.log('email:', email.value)
-console.log('parola:', password.value)
-    const response = await fetch('http://localhost:8080/login', {
+    const response = await fetch('http://localhost:8080/auth/login', {
       method: 'POST',
-      body: new URLSearchParams({
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         username: email.value,
         password: password.value,
-      }).toString(),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      credentials: 'include', 
+      }),
     })
 
     console.log('[AUTH] Răspuns primit:', response)
 
     const text = await response.text()
-    console.log('[AUTH] Raw text:', text)
-
-    const data = (() => {
-      try {
-        return JSON.parse(text)
-      } catch {
-        return {}
-      }
-    })()
+    console.log('[AUTH] Token JWT brut:', text)
 
     if (!response.ok) {
-      console.warn('[AUTH] Autentificare eșuată:', data.error || 'Login failed.')
-      errorMsg.value = data.error || 'Email sau parolă incorecte.'
+      errorMsg.value = 'Email sau parolă incorecte.'
       loading.value = false
       return
     }
 
-    console.info('[AUTH] Autentificare reușită. Sesiune activă.')
+    // Salvăm tokenul JWT în localStorage
+    localStorage.setItem('jwt_token', text)
+
+    console.info('[AUTH] Autentificare reușită. Token salvat localStorage.')
     loading.value = false
-    router.push('/dashboard/crm') // ✅ redirecție manuală în frontend
+
+    router.push('/dashboard/crm') // redirecționare după login
 
   } catch (error) {
     console.error('[AUTH] Eroare de rețea sau server:', error)
