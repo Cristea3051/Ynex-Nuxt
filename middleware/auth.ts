@@ -1,20 +1,24 @@
-import { useAuthStore } from "~/stores/auth";
+import { useAuthStore } from '~/stores/auth'
+import { useCookie } from '#app'
 
 export default defineNuxtRouteMiddleware((to) => {
-const { authenticated } = storeToRefs(useAuthStore())
-const token = useCookie('token')
+  const authStore = useAuthStore()
+  const token = useCookie('token')
 
-if (!authenticated.value && !token.value) {
-  navigateTo('/auth/login')
-}
-  // if token exists and url is /login redirect to homepage
-  if (token.value && to?.name === 'auth-login') {
-    return navigateTo('/');
+  console.log('Middleware:', { authenticated: authStore.authenticated, token: token.value, to: to.name })
+
+  // Dacă nu e autentificat și nu există token, redirect la login
+  if (!authStore.authenticated && !token.value) {
+    return navigateTo('/auth/login')
   }
 
-  // if token doesn't exist redirect to log in
-  if (!token.value && to?.name !== 'auth-login') {
-    return navigateTo('/auth/login');
+  // Dacă există token și vrem să accesăm pagina login, redirect la home
+  if (token.value && to.name === 'auth-login') {
+    return navigateTo('/')
   }
 
-});
+  // Dacă nu există token și încercăm altă pagină decât login, redirect la login
+  if (!token.value && to.name !== 'auth-login') {
+    return navigateTo('/auth/login')
+  }
+})

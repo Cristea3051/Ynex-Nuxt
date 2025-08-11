@@ -92,7 +92,7 @@ const submitForm = async () => {
             <p class="mb-4 text-muted op-7 fw-normal text-center">Welcome & Join us by creating a free account!</p>
             
             <div class="row gy-3">
-              <div class="col-xl-6">
+              <div class="col-xl-12">
                 <label for="signup-firstname" class="form-label text-default">First Name</label>
                 <input
                   type="text"
@@ -102,7 +102,7 @@ const submitForm = async () => {
                   v-model="firstName"
                 />
               </div>
-              <div class="col-xl-6">
+              <div class="col-xl-12">
                 <label for="signup-lastname" class="form-label text-default">Last Name</label>
                 <input
                   type="text"

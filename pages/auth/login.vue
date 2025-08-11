@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import passwordInput from '~/components/UI/passwordInput.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '~/stores/auth'
+import { useCookie } from '#app'
 
 const errorMsg = ref('')
 const loading = ref(false)
 const email = ref('')
 const password = ref('')
 const router = useRouter()
+const authStore = useAuthStore()
+const tokenCookie = useCookie('token')
 
 const login = async () => {
   errorMsg.value = ''
   loading.value = true
-  console.log('[AUTH] Începem autentificarea...')
 
   try {
     const response = await fetch('http://localhost:8080/auth/login', {
@@ -26,23 +29,28 @@ const login = async () => {
       }),
     })
 
-    console.log('[AUTH] Răspuns primit:', response)
-
-    const text = await response.text()
-    console.log('[AUTH] Token JWT brut:', text)
-
     if (!response.ok) {
       errorMsg.value = 'Email sau parolă incorecte.'
       loading.value = false
       return
     }
 
-    // Salvăm tokenul JWT în localStorage
-    localStorage.setItem('jwt_token', text)
+    const token = await response.text()
 
-    console.info('[AUTH] Autentificare reușită. Token salvat localStorage.')
+  const tokenCookie = useCookie('token', {
+  path: '/',
+  maxAge: 60 * 60 * 24, // 1 zi
+  sameSite: 'lax',
+  secure: false, // în producție true, dacă ai HTTPS
+  })
+
+// După aia setezi doar valoarea:
+tokenCookie.value = token
+
+    // Actualizează store-ul
+    authStore.authenticated = true
+
     loading.value = false
-
     router.push('/dashboard/crm') // redirecționare după login
 
   } catch (error) {
@@ -51,10 +59,8 @@ const login = async () => {
     loading.value = false
   }
 }
+definePageMeta({ layout: 'custom' })
 
-definePageMeta({
-  layout: 'custom',
-})
 </script>
 
 
