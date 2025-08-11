@@ -3,18 +3,19 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import passwordInput from '@/components/UI/passwordInput.vue';
 
-definePageMeta({
-  layout: 'custom',
-})
+definePageMeta({ layout: 'custom' })
 
 const router = useRouter();
 
-const name = ref('');
+const firstName = ref('');
+const lastName = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const phone = ref('');
 const address = ref('');
+const age = ref<number | null>(null);
+const gender = ref('');
 const agreedToTerms = ref(false);
 
 const errorMsg = ref('');
@@ -33,18 +34,29 @@ const submitForm = async () => {
     return;
   }
 
+  if (
+    !firstName.value || !lastName.value || !email.value || !password.value ||
+    !phone.value || !address.value || !age.value || !gender.value
+  ) {
+    errorMsg.value = 'Please fill all required fields.';
+    return;
+  }
+
   loading.value = true;
 
   try {
-    const response = await fetch('http://localhost:8080/api/register', {
+    const response = await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: name.value,
+        firstName: firstName.value,
+        lastName: lastName.value,
         email: email.value,
         password: password.value,
         phone: phone.value,
         address: address.value,
+        age: age.value,
+        gender: gender.value,
       }),
     });
 
@@ -56,8 +68,7 @@ const submitForm = async () => {
     }
 
     loading.value = false;
-    router.push('/auth/register/basic');
-
+    router.push('/auth/login');
   } catch (e) {
     errorMsg.value = 'Network or server error.';
     loading.value = false;
@@ -78,18 +89,27 @@ const submitForm = async () => {
         <div class="card custom-card">
           <div class="card-body p-5">
             <p class="h5 fw-semibold mb-2 text-center">Sign Up</p>
-            <p class="mb-4 text-muted op-7 fw-normal text-center">
-              Welcome & Join us by creating a free account!
-            </p>
+            <p class="mb-4 text-muted op-7 fw-normal text-center">Welcome & Join us by creating a free account!</p>
+            
             <div class="row gy-3">
-              <div class="col-xl-12">
-                <label for="signup-name" class="form-label text-default">Name</label>
+              <div class="col-xl-6">
+                <label for="signup-firstname" class="form-label text-default">First Name</label>
                 <input
                   type="text"
                   class="form-control form-control-lg"
-                  id="signup-name"
-                  placeholder="Name"
-                  v-model="name"
+                  id="signup-firstname"
+                  placeholder="First Name"
+                  v-model="firstName"
+                />
+              </div>
+              <div class="col-xl-6">
+                <label for="signup-lastname" class="form-label text-default">Last Name</label>
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  id="signup-lastname"
+                  placeholder="Last Name"
+                  v-model="lastName"
                 />
               </div>
               <div class="col-xl-12">
@@ -122,21 +142,32 @@ const submitForm = async () => {
                   v-model="address"
                 />
               </div>
+              <div class="col-xl-6">
+                <label for="signup-age" class="form-label text-default">Age</label>
+                <input
+                  type="number"
+                  class="form-control form-control-lg"
+                  id="signup-age"
+                  placeholder="Age"
+                  v-model.number="age"
+                />
+              </div>
+              <div class="col-xl-6">
+                <label for="signup-gender" class="form-label text-default">Gender</label>
+                <select class="form-select form-control-lg" id="signup-gender" v-model="gender">
+                  <option value="" disabled>Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
               <div class="col-xl-12">
                 <label for="signup-password" class="form-label text-default">Password</label>
                 <div class="input-group">
-                  <passwordInput
-                    v-model="password"
-                    name="password"
-                    id="password"
-                    placeholder="Password"
-                  />
+                  <passwordInput v-model="password" name="password" id="password" placeholder="Password" />
                 </div>
               </div>
               <div class="col-xl-12 mb-2">
-                <label for="signup-confirmpassword" class="form-label text-default"
-                  >Confirm Password</label
-                >
+                <label for="signup-confirmpassword" class="form-label text-default">Confirm Password</label>
                 <div class="input-group">
                   <passwordInput
                     v-model="confirmPassword"
@@ -155,18 +186,12 @@ const submitForm = async () => {
                 />
                 <label class="form-check-label text-muted fw-normal" for="defaultCheck1">
                   By creating an account you agree to our
-                  <NuxtLink to="/pages/terms-conditions" class="text-success"
-                    ><u>Terms & Conditions</u></NuxtLink
-                  >
+                  <NuxtLink to="/pages/terms-conditions" class="text-success"><u>Terms & Conditions</u></NuxtLink>
                   and <a class="text-success"><u>Privacy Policy</u></a>
                 </label>
               </div>
               <div class="col-xl-12 d-grid mt-2">
-                <button
-                  class="btn btn-lg btn-primary"
-                  @click.prevent="submitForm"
-                  :disabled="loading"
-                >
+                <button class="btn btn-lg btn-primary" @click.prevent="submitForm" :disabled="loading">
                   Create Account
                 </button>
               </div>
@@ -175,9 +200,7 @@ const submitForm = async () => {
             <div class="text-center">
               <p class="fs-12 text-muted mt-3">
                 Already have an account?
-                <NuxtLink to="/authentication/sign-in/basic" class="text-primary"
-                  >Sign In</NuxtLink
-                >
+                <NuxtLink to="/authentication/sign-in/basic" class="text-primary">Sign In</NuxtLink>
               </p>
             </div>
           </div>

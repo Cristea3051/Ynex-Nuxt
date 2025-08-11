@@ -392,7 +392,7 @@
                     <li><NuxtLink class="dropdown-item d-flex" to="/pages/email/mail-settings"><i class="ti ti-adjustments-horizontal fs-18 me-2 op-7"></i>Settings</NuxtLink></li> 
                     <li><NuxtLink class="dropdown-item d-flex border-block-end" to="javascript:void(0);"><i class="ti ti-wallet fs-18 me-2 op-7"></i>Bal: $7,12,950</NuxtLink></li> 
                     <li><NuxtLink class="dropdown-item d-flex" to="/pages/chat"><i class="ti ti-headset fs-18 me-2 op-7"></i>Support</NuxtLink></li> 
-                    <li><NuxtLink class="dropdown-item d-flex" @click="logout" to="/authentication/sign-in/cover"><i class="ti ti-logout fs-18 me-2 op-7"></i>Log Out</NuxtLink></li> 
+                    <li><NuxtLink class="dropdown-item d-flex" @click="logout"><i class="ti ti-logout fs-18 me-2 op-7"></i>Log Out</NuxtLink></li> 
                 </ul> 
             </div>
                 <!-- End::header-element -->
@@ -472,8 +472,16 @@
 </template>
 <script>
 import { switcherStore } from '@/stores/switcher';
-import { useAuthStore } from '@/stores/auth'; // import the auth store we just created
+import { useAuthStore } from '@/stores/auth'; 
 import { notificationList, cartList, header } from '@/data/headerdata.js';
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const logout = () => {
+  localStorage.removeItem('jwt_token')  // șterge tokenul
+  router.push('/auth/login')             // du user la login
+}
+
 export default {
     setup() {
         const switcher = switcherStore();
