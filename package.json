@@ -72,7 +72,7 @@
     "photoswipe": "^5.4.4",
     "pinia": "^2.2.2",
     "simplebar-vue": "^2.4.0",
-    "sweetalert2": "^11.6.13",
+    "sweetalert2": "^11.4.8",
     "swiper": "^11.1.12",
     "vee-validate": "^4.13.2",
     "vue-chart-3": "^3.1.8",
@@ -99,6 +99,9 @@
     "vuex": "^4.1.0",
     "yarn": "^1.22.22",
     "yup": "^1.4.0"
+  },
+  "overrides": {
+    "quill": "^2.0.0"
   },
   "version": "1.0.0",
   "author": "spruko <dev@team.spruko.com>",
