@@ -17,7 +17,8 @@ const ROLE_ROUTES: Record<string, string[]> = {
   '/admin/settings': ['SUPER_ADMIN'],
   '/dashboard/crm': ['USER', 'ADMIN', 'SUPER_ADMIN'],
   '/customers': ['USER', 'ADMIN', 'SUPER_ADMIN'],
-  '/reports': ['ADMIN', 'SUPER_ADMIN']
+  '/reports': ['ADMIN', 'SUPER_ADMIN'],
+  '/pages/team': ['USER', 'ADMIN', 'SUPER_ADMIN']
 }
 
 export default defineNuxtRouteMiddleware(async (to, from) => {

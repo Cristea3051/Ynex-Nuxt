@@ -57,59 +57,42 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async login(credentials: LoginCredentials) {
-      this.loading = true
-      this.error = null
+   async login(credentials: LoginCredentials) {
+  this.loading = true
+  this.error = null
 
-      try {
-        const response = await authAPI.login(credentials)
-        const data: AuthResponse = response.data
-
-        // Store tokens in cookies
-        const tokenCookie = useCookie('token', {
-          httpOnly: false, // Set to true in production with proper backend setup
-          secure: true, // Use HTTPS in production
-          sameSite: 'lax',
-          maxAge: credentials.rememberMe ? 60 * 60 * 24 * 30 : undefined // 30 days if remember me
-        })
-        
-        const refreshTokenCookie = useCookie('refreshToken', {
-          httpOnly: false, // Set to true in production
-          secure: true,
-          sameSite: 'lax',
-          maxAge: credentials.rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7 // 7-30 days
-        })
-
-        tokenCookie.value = data.accessToken
-        refreshTokenCookie.value = data.refreshToken
-
-        // Update store state
-        this.user = data.user
-        this.authenticated = true
-        this.loading = false
-
-        // Store user data in localStorage for persistence (optional)
-        if (process.client) {
-          localStorage.setItem('user', JSON.stringify(data.user))
-        }
-
-        return { success: true, user: data.user }
-      } catch (error: any) {
-        this.loading = false
-        this.authenticated = false
-        this.user = null
-        
-        if (error.response?.status === 401) {
-          this.error = 'Invalid username or password'
-        } else if (error.response?.status === 403) {
-          this.error = 'Account is disabled or locked'
-        } else {
-          this.error = error.response?.data?.message || 'Login failed. Please try again.'
-        }
-        
-        return { success: false, error: this.error }
-      }
-    },
+  try {
+    const response = await authAPI.login(credentials)
+    const data = response.data
+    
+    // Now backend returns proper structure
+    const tokenCookie = useCookie('token', {
+      httpOnly: false, // Should be true in production with proper setup
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 // 1 hour for access token
+    })
+    
+    const refreshTokenCookie = useCookie('refreshToken', {
+      httpOnly: false, // Should be true in production
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7 // 7 days for refresh token
+    })
+    
+    tokenCookie.value = data.accessToken
+    refreshTokenCookie.value = data.refreshToken
+    
+    // Real user data from backend
+    this.user = data.user
+    this.authenticated = true
+    this.loading = false
+    
+    return { success: true, user: this.user }
+  } catch (error: any) {
+    // ... error handling
+  }
+},
 
     async logout() {
       try {

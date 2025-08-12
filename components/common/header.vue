@@ -474,28 +474,26 @@
 import { switcherStore } from '@/stores/switcher';
 import { useAuthStore } from '@/stores/auth'; 
 import { notificationList, cartList, header } from '@/data/headerdata.js';
-import { useRouter } from 'vue-router'
-const router = useRouter()
-
-const logout = () => {
-  localStorage.removeItem('jwt_token')  // șterge tokenul
-  router.push('/auth/login')             // du user la login
-}
 
 export default {
     setup() {
         const switcher = switcherStore();
-
-        const colorthemeFn = value => { localStorage.setItem('ynexcolortheme', value), localStorage.removeItem('ynexbodyBgRGB', value); switcher.colorthemeFn(value) };
+        const authStore = useAuthStore();
         const router = useRouter();
 
-
-        const { logUserOut } = useAuthStore(); // use authenticateUser action from  auth store
-
-        const logout = () => {
-            logUserOut();
-            router.push('/');
+        const colorthemeFn = value => { 
+            localStorage.setItem('ynexcolortheme', value);
+            localStorage.removeItem('ynexbodyBgRGB', value); 
+            switcher.colorthemeFn(value);
         };
+
+        // Correct logout function using the store's logout method
+        const logout = async () => {
+            console.log('Logout clicked');
+            await authStore.logout(); // Use logout, not logUserOut
+            // No need to push to router, the store's logout already does it
+        };
+
         return {
             switcher,
             colorthemeFn,
@@ -504,7 +502,9 @@ export default {
     },
     data() {
         return {
-            notificationList, cartList, header,
+            notificationList, 
+            cartList, 
+            header,
             isFullScreen: false,
         }
     },
@@ -560,10 +560,9 @@ export default {
             }
         },
         toggleFullScreen() {
-            const element = document.documentElement; // Full-screen target element
+            const element = document.documentElement;
 
             if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement) {
-                // If in full-screen mode, exit it
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.mozCancelFullScreen) {
@@ -572,7 +571,6 @@ export default {
                     document.webkitExitFullscreen();
                 }
             } else {
-                // If not in full-screen mode, enter it
                 if (element.requestFullscreen) {
                     element.requestFullscreen();
                 } else if (element.mozRequestFullScreen) {

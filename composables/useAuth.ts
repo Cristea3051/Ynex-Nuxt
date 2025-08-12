@@ -22,23 +22,24 @@ export const useAuth = () => {
   const authStore = useAuthStore()
   const router = useRouter()
   
-  const login = async (credentials: { username: string; password: string; rememberMe?: boolean }) => {
-    const result = await authStore.login(credentials)
+const login = async (credentials: { username: string; password: string; rememberMe?: boolean }) => {
+  const result = await authStore.login(credentials)
+  
+  if (result.success) {
+   
+    const route = useRoute()
+    const redirectTo = route.query.redirect as string || '/dashboard/crm' 
     
-    if (result.success) {
-      // Get redirect URL from query params or default to dashboard
-      const route = useRoute()
-      const redirectTo = route.query.redirect as string || '/dashboard'
-      
-      await navigateTo(redirectTo)
-    }
-    
-    return result
+    await navigateTo(redirectTo)
   }
   
-  const logout = async () => {
-    await authStore.logout()
-  }
+  return result
+}
+  
+const logout = async () => {
+  await authStore.logout()  
+ 
+}
   
   const register = async (userData: RegisterData): Promise<ApiResponse> => {
     // Implement registration logic
