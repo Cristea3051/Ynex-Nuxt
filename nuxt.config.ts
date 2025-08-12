@@ -3,6 +3,12 @@ import { resolve } from "node:path"
 export default defineNuxtConfig({
   telemetry: false,
 
+  typescript: {
+    strict: false,  // Set to true for stricter type checking
+    shim: false
+  },
+  
+
   alias: {
     assets: "/<rootDir>/assets",
     cookie: resolve(__dirname, "node_modules/cookie")
