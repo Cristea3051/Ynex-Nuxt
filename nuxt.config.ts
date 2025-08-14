@@ -2,23 +2,19 @@ import { resolve } from "node:path"
 
 export default defineNuxtConfig({
   telemetry: false,
-
   typescript: {
-    strict: false,  // Set to true for stricter type checking
+    strict: false,
     shim: false
   },
-  
-
   alias: {
     assets: "/<rootDir>/assets",
     cookie: resolve(__dirname, "node_modules/cookie")
   },
-
   modules: [
     '@nuxt/image',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt'  // Add this line
   ],
-
   app: {
     baseURL: '/',
     head: {
@@ -27,19 +23,14 @@ export default defineNuxtConfig({
       ]
     }
   },
-
   ssr: false,
-
   build: {
     transpile: ["vuetify", 'vue-countup-v3']
   },
-
   devtools: { enabled: true },
-
   plugins: [
-    { src: "@/plugins/plugins.ts", mode: "client" }
+    { src: "@/plugins/plugins.ts", mode: "client" },
   ],
-
   css: [
     '@mdi/font/css/materialdesignicons.css',
     'vuetify/styles/main.sass',
@@ -47,18 +38,15 @@ export default defineNuxtConfig({
     '@/assets/css/bootstrap.css',
     '@/assets/css/styles.css'
   ],
-
   runtimeConfig: {
     public: {
-      apiBase: 'http://localhost:8080' // backend-ul Spring
+      apiBase: 'http://localhost:8080'  // Your API base URL
     }
   },
-
   vite: {
     define: {
       'import.meta.env.googleMapsApiKey': JSON.stringify('AIzaSy...')
     }
   },
-
   compatibilityDate: '2025-07-25'
 })

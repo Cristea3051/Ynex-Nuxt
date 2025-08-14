@@ -3,8 +3,8 @@ import { useAuthStore } from '~/stores/auth'
 
 // Define public routes that don't require authentication
 const PUBLIC_ROUTES = [
-  '/auth/login',
-  '/auth/register',
+  '/auth/signin', 
+  '/auth/signin/basic',
   '/auth/forgot-password',
   '/auth/reset-password',
   '/auth/verify-email'

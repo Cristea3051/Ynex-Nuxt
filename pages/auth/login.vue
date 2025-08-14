@@ -2,7 +2,9 @@
 import { ref } from 'vue'
 import passwordInput from '~/components/UI/passwordInput.vue'
 const { login, loading, error, clearError } = useAuth()
+import { useAuthStore } from '~/stores/auth'
 
+const authStore = useAuthStore()
 // Form data
 const email = ref('')
 const password = ref('')
@@ -27,9 +29,19 @@ const handleLogin = async () => {
       password: password.value,
       rememberMe: false // You can add a checkbox for this
     })
-    
+
+    console.log('Login result:', result)
+
+    if (result.success) {
+      // Check if token was set
+      const token = useCookie('token').value
+      console.log('Token after login:', token)  // ADD THIS
+      console.log('User after login:', authStore.user)  // ADD THIS
+    }
+
+    // If login failed, show a generic error message
     if (!result.success) {
-      errorMsg.value = result.error || 'Email sau parolă incorecte.'
+      errorMsg.value = 'Email sau parolă incorecte.'
     }
     // If successful, the login method will handle navigation automatically
     

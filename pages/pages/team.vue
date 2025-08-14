@@ -102,6 +102,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { userAPI } from '~/utils/api'
 import TeamsCardComponent from '@/components/@spk/teams-cards.vue'
+import { useAuthStore } from '~/stores/auth'
+
+const authStore = useAuthStore()
 
 // Default images
 import cover1 from '/images/media/team-covers/1.jpg'
@@ -212,31 +215,30 @@ const paginatedUsers = computed(() => {
   return filteredUsers.value.slice(start, start + itemsPerPage)
 })
 
-// Methods
 const fetchUsers = async () => {
   loading.value = true
   error.value = null
   
   try {
-    const response = await userAPI.getAll({
-      // You can add query params here if your API supports them
-      // page: 1,
-      // limit: 100
-    })
+    // Log the token being sent
+    const token = useCookie('token').value
+    console.log('Token exists:', !!token)
+    console.log('Token value:', token?.substring(0, 20) + '...') // Show first 20 chars
+    
+    const response = await userAPI.getAll({})
     
     users.value = response.data
     console.log(`Loaded ${users.value.length} users`)
   } catch (err: any) {
     console.error('Error fetching users:', err)
+    console.error('Error response:', err.response)  // Add this
     
     if (err.response?.status === 401) {
       error.value = 'Authentication failed. Please login again.'
-      // Optionally redirect to login
-      // await navigateTo('/auth/login')
     } else if (err.response?.status === 403) {
-      error.value = 'You do not have permission to view users.'
+      error.value = 'You do not have permission to view users. Required roles: USER, ADMIN, or SUPER_ADMIN'
     } else {
-      error.value = err.response?.data?.message || 'Failed to load team members. Please try again.'
+      error.value = err.response?.data?.message || 'Failed to load team members.'
     }
   } finally {
     loading.value = false
@@ -270,6 +272,10 @@ const nextPage = () => {
 
 // Lifecycle
 onMounted(() => {
+   console.log('Current user:', authStore.user)
+  console.log('User roles:', authStore.userRoles)
+  console.log('Has USER role:', authStore.hasRole('USER'))
+  console.log('Has ADMIN role:', authStore.hasRole('ADMIN'))
   fetchUsers()
 })
 
@@ -278,14 +284,3 @@ onMounted(() => {
 //   middleware: 'auth'
 // })
 </script>
-
-<style scoped>
-/* Add any custom styles here */
-.team-member-card {
-  transition: transform 0.2s;
-}
-
-.team-member-card:hover {
-  transform: translateY(-5px);
-}
-</style>
