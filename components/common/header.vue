@@ -379,8 +379,8 @@
                         <div class="me-sm-2 me-0"> 
                            <img src="/images/faces/9.jpg" alt="img" width="32" height="32" class="rounded-circle"> 
                         </div> 
-                        <div class="d-sm-block d-none"> 
-                            <p class="fw-semibold mb-0 lh-1">Json Taylor</p>
+                        <div class="d-sm-block d-none" v-if="profile"> 
+                            <p class="fw-semibold mb-0 lh-1">{{ profile.firstName }} {{ profile.lastName }}</p>
                             <span class="op-7 fw-normal d-block fs-11">Web Designer</span> 
                         </div> 
                     </div> 
@@ -470,135 +470,102 @@
             </div>
         </div>
 </template>
-<script>
-import { switcherStore } from '@/stores/switcher';
-import { useAuthStore } from '@/stores/auth'; 
-import { notificationList, cartList, header } from '@/data/headerdata.js';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { switcherStore } from '@/stores/switcher'
+import { useAuthStore } from '@/stores/auth'
+import { userAPI } from '~/utils/api'
+import { notificationList, cartList, header } from '@/data/headerdata.js'
 
-export default {
-    setup() {
-        const switcher = switcherStore();
-        const authStore = useAuthStore();
-        const router = useRouter();
+// Stores
+const switcher = switcherStore()
+const authStore = useAuthStore()
+const router = useRouter()
 
-        const colorthemeFn = value => { 
-            localStorage.setItem('ynexcolortheme', value);
-            localStorage.removeItem('ynexbodyBgRGB', value); 
-            switcher.colorthemeFn(value);
-        };
+// Profile
+const profile = ref(null)
+const error = ref(null)
 
-        // Correct logout function using the store's logout method
-        const logout = async () => {
-            console.log('Logout clicked');
-            await authStore.logout(); // Use logout, not logUserOut
-            // No need to push to router, the store's logout already does it
-        };
+onMounted(async () => {
+  try {
+    const response = await userAPI.getProfile()
+    profile.value = response.data
+  } catch (err) {
+    error.value = 'Nu s-a putut încărca profilul'
+    console.error(err)
+  }
+})
 
-        return {
-            switcher,
-            colorthemeFn,
-            logout
-        }
-    },
-    data() {
-        return {
-            notificationList, 
-            cartList, 
-            header,
-            isFullScreen: false,
-        }
-    },
-    methods: {
-        ToggleMenu() {
-            let html = document.querySelector('html');
-            if (window.innerWidth <= 992) {
-                let dataToggled = html.getAttribute('data-toggled');
-                if (dataToggled == 'open') {
-                    html.setAttribute('data-toggled', 'close');
-                } else {
-                    html.setAttribute('data-toggled', 'open');
-                }
-            } else {
-                let menuNavLayoutType = html.getAttribute('data-nav-style');
-                let verticalStyleType = html.getAttribute('data-vertical-style');
-                if (menuNavLayoutType) {
-                    let dataToggled = html.getAttribute('data-toggled');
-                    if (dataToggled) {
-                        html.removeAttribute('data-toggled');
-                    } else {
-                        html.setAttribute('data-toggled', menuNavLayoutType + '-closed');
-                    }
-                } else if (verticalStyleType) {
-                    let dataToggled = html.getAttribute('data-toggled');
-                    if (verticalStyleType == 'doublemenu') {
-                        if (html.getAttribute('data-toggled') === 'double-menu-open' && document.querySelector('.double-menu-active')) {
-                            html.setAttribute('data-toggled', 'double-menu-close');
-                        } else {
-                            if (document.querySelector('.double-menu-active')) {
-                                html.setAttribute('data-toggled', 'double-menu-open');
-                            }
-                        }
-                    } else if (dataToggled) {
-                        html.removeAttribute('data-toggled');
-                    } else {
-                        switch (verticalStyleType) {
-                            case 'closed':
-                                html.setAttribute('data-toggled', 'close-menu-close');
-                                break;
-                            case 'icontext':
-                                html.setAttribute('data-toggled', 'icon-text-close');
-                                break;
-                            case 'overlay':
-                                html.setAttribute('data-toggled', 'icon-overlay-close');
-                                break;
-                            case 'detached':
-                                html.setAttribute('data-toggled', 'detached-close');
-                                break;
-                        }
-                    }
-                }
-            }
-        },
-        toggleFullScreen() {
-            const element = document.documentElement;
+// Theme
+const colorthemeFn = (value: string) => {
+  localStorage.setItem('ynexcolortheme', value)
+  localStorage.removeItem('ynexbodyBgRGB')
+  switcher.colorthemeFn(value)
+}
 
-            if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement) {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-            } else {
-                if (element.requestFullscreen) {
-                    element.requestFullscreen();
-                } else if (element.mozRequestFullScreen) {
-                    element.mozRequestFullScreen();
-                } else if (element.webkitRequestFullscreen) {
-                    element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-                }
-            }
-        },
-        removeNotification(item) {
-            this.notificationList = this.notificationList.filter(itm => itm.id != item.id);
-        },
-        removeItemFromCart(item) {
-            this.cartList = this.cartList.filter(itm => itm.id != item.id);
-        },
-        fullscreenchanged() {
-            if (document.fullscreenElement) {
-                this.isFullScreen = true;
-            } else {
-                this.isFullScreen = false;
-            }
-        },
-        removeHeader(index) {
-            this.header.splice(index, 1);
-        }
-    },
-    mounted() {
-        document.addEventListener("fullscreenchange", this.fullscreenchanged);
-    },
+// Logout
+const logout = async () => {
+  console.log('Logout clicked')
+  await authStore.logout()
+}
+
+// UI State
+const isFullScreen = ref(false)
+const notifications = ref([...notificationList])
+const cart = ref([...cartList])
+const headers = ref([...header])
+
+// Menu toggle
+const ToggleMenu = () => {
+  const html = document.querySelector('html')
+  const width = window.innerWidth
+  const dataToggled = html?.getAttribute('data-toggled')
+  const navStyle = html?.getAttribute('data-nav-style')
+  const verticalStyle = html?.getAttribute('data-vertical-style')
+
+  if (width <= 992) {
+    html?.setAttribute('data-toggled', dataToggled === 'open' ? 'close' : 'open')
+  } else if (navStyle) {
+    html?.setAttribute('data-toggled', dataToggled ? '' : `${navStyle}-closed`)
+  } else if (verticalStyle === 'doublemenu') {
+    const active = document.querySelector('.double-menu-active')
+    if (dataToggled === 'double-menu-open' && active) {
+      html?.setAttribute('data-toggled', 'double-menu-close')
+    } else if (active) {
+      html?.setAttribute('data-toggled', 'double-menu-open')
+    }
+  } else {
+    html?.setAttribute('data-toggled', dataToggled ? '' : `${verticalStyle}-close`)
+  }
+}
+
+// Fullscreen toggle
+const toggleFullScreen = () => {
+  const el = document.documentElement
+  if (document.fullscreenElement) {
+    document.exitFullscreen?.()
+  } else {
+    el.requestFullscreen?.()
+  }
+}
+
+// Fullscreen state
+const fullscreenchanged = () => {
+  isFullScreen.value = !!document.fullscreenElement
+}
+onMounted(() => {
+  document.addEventListener('fullscreenchange', fullscreenchanged)
+})
+
+// Remove items
+const removeNotification = (item) => {
+  notifications.value = notifications.value.filter(itm => itm.id !== item.id)
+}
+const removeItemFromCart = (item) => {
+  cart.value = cart.value.filter(itm => itm.id !== item.id)
+}
+const removeHeader = (index: number) => {
+  headers.value.splice(index, 1)
 }
 </script>

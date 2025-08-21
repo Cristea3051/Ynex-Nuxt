@@ -279,8 +279,4 @@ onMounted(() => {
   fetchUsers()
 })
 
-// Optional: Protect the page with auth
-// definePageMeta({
-//   middleware: 'auth'
-// })
 </script>

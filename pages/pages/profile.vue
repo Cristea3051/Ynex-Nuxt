@@ -1,7 +1,11 @@
-<script lang="ts">
-import PageHeader from "@/components/common/pageheader.vue";
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import PageHeader from '@/components/common/pageheader.vue';
+import ProfileCardComponent from '@/components/@spk/pages/profile-cards.vue';
+import Activities from '@/components/@spk/activities.vue';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/style.css';
+import { userAPI } from '~/utils/api';
 
 import media39 from "/images/media/media-39.jpg";
 import media17 from "/images/media/media-17.jpg";
@@ -42,50 +46,23 @@ import media32 from '/images/media/media-32.jpg';
 import media30 from '/images/media/media-30.jpg';
 import media31 from '/images/media/media-31.jpg';
 import filemanager3 from '/images/media/file-manager/3.png';
-import ProfileCardComponent from '@/components/@spk/pages/profile-cards.vue';
-import Activities from "@/components/@spk/activities.vue";
 
-export default {
-    setup() {
-        definePageMeta({
-            middleware: ["auth"],
-        })
-    },
-    components: {
-        PageHeader, ProfileCardComponent, Activities
-    },
-    data() {
-        return {
-            dataToPass: {
-                current: "Profile",
-                list: [
-                    'Pages', 'Profile'
-                ]
-            },
-            lightbox: null as PhotoSwipeLightbox | null,
-            images: [
-                { src: media40, w: 600, h: 400, thumbnail: media40, alt: 'alt' },
-                { src: media41, w: 600, h: 400, thumbnail: media41, alt: 'alt' },
-                { src: media42, w: 600, h: 400, thumbnail: media42, alt: 'alt' },
-                { src: media43, w: 600, h: 400, thumbnail: media43, alt: 'alt' },
-                { src: media44, w: 600, h: 400, thumbnail: media44, alt: 'alt' },
-                { src: media45, w: 600, h: 400, thumbnail: media45, alt: 'alt' },
-                { src: media46, w: 600, h: 400, thumbnail: media46, alt: 'alt' },
-                { src: media60, w: 600, h: 400, thumbnail: media60, alt: 'alt' },
-                { src: media26, w: 600, h: 400, thumbnail: media26, alt: 'alt' },
-                { src: media32, w: 600, h: 400, thumbnail: media32, alt: 'alt' },
-                { src: media30, w: 600, h: 400, thumbnail: media30, alt: 'alt' },
-                { src: media31, w: 600, h: 400, thumbnail: media31, alt: 'alt' },
-            ],
-            profileDetails: {
-                bio: `I am <b class="text-default">Sonya Taylor,</b> here by conclude that,i am the founder and managing director of the prestigeous company name laugh at all and acts as the cheif executieve officer of the company.`,
-                contactInformation: [
+// Middleware autentificare
+definePageMeta({
+  middleware: ['auth'],
+});
+
+// Date statice (ca fallback)
+const profileDetails = ref({
+bio: `I am <b class="text-default">Sonya Taylor,</b> here by conclude that,i am the founder and managing director of the prestigeous company name laugh at all and acts as the cheif executieve officer of the company.`,
+                links: [{ name: "https://www.spruko.com/", links: "https://www.spruko.com/" }, { name: "https://themeforest.net/user/spruko/portfolio", links: "https://themeforest.net/user/spruko/portfolio" }],
+                 contactInformation: [
                     { icon: "mail", title: "sonyataylor2531@gmail.com" },
                     { icon: "phone", title: "+(555) 555-1234" },
                     { icon: "map-pin", title: "MIG-1-11, Monroe Street, Georgetown, Washington D.C, USA,20071" },
                 ],
                 personalInformation: { Name: "Sonya Taylor", Email: "sonyataylor231@gmail.com", Phone: "+(555) 555-1234", Designation: "C.E.O", Age: "28", Experience: "10 Years", },
-                links: [{ name: "https://www.spruko.com/", links: "https://www.spruko.com/" }, { name: "https://themeforest.net/user/spruko/portfolio", links: "https://themeforest.net/user/spruko/portfolio" }],
+                
                 socialMedia: [
                     { name: "facebook", links: "", icon: "facebook", iconColor: "primary" },
                     { name: "twitter", links: "", icon: "twitter-x", iconColor: "secondary" },
@@ -107,61 +84,156 @@ export default {
                     { name: "Alicia Sierra", avatar: face5 },
                     { name: "Kiara Advani", avatar: face7 },
                 ],
-                skills: ["Cloud computing", "Data analysis", "DevOps", "Machine learning", "Programming", "Security", "Python", "JavaScript", "Ruby", "PowerShell", "Statistics", "SQL"],
+  skills: [
+    'Cloud computing',
+    'Data analysis',
+    'DevOps',
+    'Machine learning',
+    'Programming',
+    'Security',
+    'Python',
+    'JavaScript',
+    'Ruby',
+    'PowerShell',
+    'Statistics',
+    'SQL',
+  ],
+});
 
-            },
-            profile: [
-                { id: 1, name: 'Samantha May', email: 'samanthamay2912@gmail.com', role: 'Team Member', imgSrc: face2, color: "info" },
-                { id: 2, name: 'Andrew Garfield', email: 'andrewgarfield98@gmail.com', role: 'Team Lead', imgSrc: face15, color: "success" },
-                { id: 3, name: 'Jessica Cashew', email: 'jessicacashew143@gmail.com', role: 'Team Member', imgSrc: face5, color: "info" },
-                { id: 4, name: 'Simon Cowan', email: 'jessicacashew143@gmail.com', role: 'Team Manager', imgSrc: face11, color: "warning" },
-                { id: 5, name: 'Amanda Nunes', email: 'amandanunes45@gmail.com', role: 'Team Member', imgSrc: face7, color: "info" },
-                { id: 6, name: 'Mahira Hose', email: 'mahirahose9456@gmail.com', role: 'Team Member', imgSrc: face12, color: "info" },
-            ],
-            recentPosts: [
-                { id: 1, img: media39, size: "md", title: "Animals", description: "There are many variations of passages of Lorem Ipsum available", },
-                { id: 2, img: media56, size: "md", title: "Travel", description: "Latin words, combined with a handful of model sentence", },
-                { id: 3, img: media54, size: "md", title: "Interior", description: "Contrary to popular belief, Lorem Ipsum is not simply random", },
-                { id: 4, img: media64, size: "md", title: "Nature", description: "It was popularised in the 1960s with the release of Letraset sheets containing", },
-            ],
-            activitys: [
-                { id: 1, avatar: "E", img: "", avatarColor: "primary", description: "<p class='mb-2'><b>You</b> Commented on <b>alexander taylor</b> post <a class='text-secondary' href='javascript:void(0);'><u>#beautiful day</u></a>.<span class='float-end fs-11 text-muted'>24,Dec 2022 - 14:34</span></p>", media: [{ img: media17, name: media17 }, { img: media18, name: media18 }], avatarList: [] },
-                { id: 2, avatar: "", img: face11, description: "<p class='text-muted mb-2'><span class='text-default'><b>Json Smith</b> reacted to the post &#128077;</span>.<span class='float-end fs-11 text-muted'>18,Dec 2022 - 12:16</span></p><p class='text-muted mb-0'>Lorem ipsum dolor sit amet consectetur adipisicing elit.Repudiandae, repellendus rem rerum excepturi aperiam ipsam temporibus inventore ullam tempora eligendi libero sequi dignissimos cumque, et a sint tenetur consequatur omnis!</p>", media: [], avatarList: [] },
+const contactInformation = computed(() => {
+  const info = profile.value
+  if (!info) return []
+
+  return [
+    info.email && { icon: 'mail', title: info.email },
+    info.phone && { icon: 'phone', title: info.phone },
+    info.address && { icon: 'map-pin', title: info.address }
+  ].filter(Boolean)
+})
+
+
+
+// Date statice pentru galeria de imagini
+const images = ref([
+  { src: media40, w: 600, h: 400, thumbnail: media40, alt: 'alt' },
+  { src: media41, w: 600, h: 400, thumbnail: media41, alt: 'alt' },
+  { src: media42, w: 600, h: 400, thumbnail: media42, alt: 'alt' },
+  { src: media43, w: 600, h: 400, thumbnail: media43, alt: 'alt' },
+  { src: media44, w: 600, h: 400, thumbnail: media44, alt: 'alt' },
+  { src: media45, w: 600, h: 400, thumbnail: media45, alt: 'alt' },
+  { src: media46, w: 600, h: 400, thumbnail: media46, alt: 'alt' },
+  { src: media60, w: 600, h: 400, thumbnail: media60, alt: 'alt' },
+  { src: media26, w: 600, h: 400, thumbnail: media26, alt: 'alt' },
+  { src: media32, w: 600, h: 400, thumbnail: media32, alt: 'alt' },
+  { src: media30, w: 600, h: 400, thumbnail: media30, alt: 'alt' },
+  { src: media31, w: 600, h: 400, thumbnail: media31, alt: 'alt' },
+]);
+
+// Date statice pentru membrii echipei
+const profileTeam = ref([
+  { id: 1, name: 'Samantha May', email: 'samanthamay2912@gmail.com', role: 'Team Member', imgSrc: face2, color: 'info' },
+  { id: 2, name: 'Andrew Garfield', email: 'andrewgarfield98@gmail.com', role: 'Team Lead', imgSrc: face15, color: 'success' },
+  { id: 3, name: 'Jessica Cashew', email: 'jessicacashew143@gmail.com', role: 'Team Member', imgSrc: face13, color: 'info' },
+  { id: 4, name: 'Simon Cowan', email: 'jessicacashew143@gmail.com', role: 'Team Manager', imgSrc: face11, color: 'warning' },
+  { id: 5, name: 'Amanda Nunes', email: 'amandanunes45@gmail.com', role: 'Team Member', imgSrc: face7, color: 'info' },
+  { id: 6, name: 'Mahira Hose', email: 'mahirahose9456@gmail.com', role: 'Team Member', imgSrc: face12, color: 'info' },
+]);
+
+// Date statice pentru postări recente
+const recentPosts = ref([
+  { id: 1, img: media39, size: 'md', title: 'Animals', description: 'There are many variations of passages of Lorem Ipsum available' },
+  { id: 2, img: media56, size: 'md', title: 'Travel', description: 'Latin words, combined with a handful of model sentence' },
+  { id: 3, img: media54, size: 'md', title: 'Interior', description: 'Contrary to popular belief, Lorem Ipsum is not simply random' },
+  { id: 4, img: media64, size: 'md', title: 'Nature', description: 'It was popularised in the 1960s with the release of Letraset sheets containing' },
+]);
+
+// Date statice pentru activități
+const activitys = ref([
+  {
+    id: 1,
+    avatar: 'E',
+    img: '',
+    avatarColor: 'primary',
+    description: `<p class='mb-2'><b>You</b> Commented on <b>alexander taylor</b> post <a class='text-secondary' href='javascript:void(0);'><u>#beautiful day</u></a>.<span class='float-end fs-11 text-muted'>24,Dec 2022 - 14:34</span></p>`,
+    media: [
+      { img: media17, name: media17 },
+      { img: media18, name: media18 },
+    ],
+    avatarList: [],
+  },
+    { id: 2, avatar: "", img: face11, description: "<p class='text-muted mb-2'><span class='text-default'><b>Json Smith</b> reacted to the post &#128077;</span>.<span class='float-end fs-11 text-muted'>18,Dec 2022 - 12:16</span></p><p class='text-muted mb-0'>Lorem ipsum dolor sit amet consectetur adipisicing elit.Repudiandae, repellendus rem rerum excepturi aperiam ipsam temporibus inventore ullam tempora eligendi libero sequi dignissimos cumque, et a sint tenetur consequatur omnis!</p>", media: [], avatarList: [] },
                 { id: 3, avatar: "", img: face4, description: "<p class='text-muted mb-2'><span class='text-default'><b>Alicia Keys</b> shared a document with <b>you</b></span>.<span class='float-end fs-11 text-muted'>21,Dec 2022 - 15:32</span></p>", media: [{ img: filemanager3, name: filemanager3, Size: true }], avatarList: [], },
                 { id: 4, avatar: "P", img: "", avatarColor: "success", description: "<p class='text-muted mb-2'><span class='text-default'><b>You</b> shared a post with 4 people <b>Simon,Sasha,Anagha,Hishen</b></span>.<span class='float-end fs-11 text-muted'>28,Dec 2022 - 18:46</span></p>", media: [{ img: media75, name: media75 }], avatarList: [{ img: face2, name: face2 }, { img: face8, name: face8 }, { img: face3, name: face3 }, { img: face10, name: face10 }] },
                 { id: 5, avatar: "", img: face5, description: "<p class='text-muted mb-1'><span class='text-default'><b>Melissa Blue</b> liked your post <b>travel excites</b></span>.<span class='float-end fs-11 text-muted'>11,Dec 2022 - 11:18</span></p><p class='text-muted'>you are already feeling the tense atmosphere of the video playing in the background</p>", media: [{ img: media59, name: media59 }, { img: media60, name: media60 }, { img: media61, name: media61 }], avatarList: [] },
                 { id: 6, avatar: "", img: media39, description: "<p class='mb-1'><b>You</b> Commented on <b>Peter Engola</b> post <a class='text-secondary' href='javascript:void(0);'><u>#Mother Nature</u></a>.<span class='float-end fs-11 text-muted'>24,Dec 2022 - 14:34</span></p><p class='text-muted'>Technology id developing rapidly kepp uo your work &#128076;</p>", media: [{ img: media26, name: media26 }, { img: media29, name: media29 },], avatarList: [] },
-            ],
-            posts: [
-                { id: 1, avatar: "", img: face9, username: "sonya taylor", date: "24, Dec - 04:32PM", message: "<p class='fs-12 text-muted mb-0'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p><p class='fs-12 text-muted mb-3'>As opposed to using 'Content here &#128076;</p>", media: [], type: "Fashion", typeBg: "primary", avatarList: [] },
-                { id: 2, avatar: "", img: face9, username: "sonya taylor", date: "26, Dec - 12:45PM", message: "<p class='fs-12 text-muted mb-1'>Shared pictures with 4 of friends <span>Hiren,Sasha,Biden,Thara</span>.</p>", media: [{ img: media52, name: media52 }, { img: media56, name: media56 }], type: "Nature", typeBg: "success", avatarList: [{ img: face2, name: face2 }, { img: face8, name: face8 }, { img: face3, name: face3 }, { img: face10, name: face10 }] },
+
+]);
+
+// Date statice pentru postări
+const posts = ref([
+  {
+    id: 1,
+    avatar: '',
+    img: face2,
+    username: 'sonya taylor',
+    date: '24, Dec - 04:32PM',
+    message: `<p class='fs-12 text-muted mb-0'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p><p class='fs-12 text-muted mb-3'>As opposed to using 'Content here &#128076;</p>`,
+    media: [],
+    type: 'Fashion',
+    typeBg: 'primary',
+    avatarList: [],
+  },
+ { id: 2, avatar: "", img: face9, username: "sonya taylor", date: "26, Dec - 12:45PM", message: "<p class='fs-12 text-muted mb-1'>Shared pictures with 4 of friends <span>Hiren,Sasha,Biden,Thara</span>.</p>", media: [{ img: media52, name: media52 }, { img: media56, name: media56 }], type: "Nature", typeBg: "success", avatarList: [{ img: face2, name: face2 }, { img: face8, name: face8 }, { img: face3, name: face3 }, { img: face10, name: face10 }] },
                 { id: 3, avatar: "", img: face9, username: "sonya taylor", date: "29, Dec - 09:53AM", message: "<p class='fs-12 text-muted mb-1'>Sharing an article that excites me about nature more than what i thought. </p><p class='mb-3 profile-post-link'><a href='javascript:void(0);' class='fs-12 text-primary'><u>https://www.discovery.com/nature/caring-for-coral</u></a></p>", media: "", type: "Travel", typeBg: "secondary", avatarList: [] },
                 { id: 4, avatar: "", img: face9, username: "sonya taylor", date: "22, Dec - 11:22PM", message: "<p class='fs-12 text-muted mb-1'>Shared pictures with 3 of your friends <span>Maya,Jacob,Amanda</span>.</p>", media: [{ img: media40, name: media40 }, { img: media45, name: media45 }], type: "Nature", typeBg: "success", avatarList: [{ img: face1, name: face1 }, { img: face5, name: face5 }, { img: face16, name: face16 }] },
                 { id: 5, avatar: "", img: face9, username: "sonya taylor", date: "18, Dec - 12:28PM", message: "<p class='fs-12 text-muted mb-1'>Followed this author for top class themes with best code you can get in the  market.</p> <p class='mb-3 profile-post-link'><a href='https://themeforest.net/user/spruko/portfolio' target='_blank' class='fs-12 text-primary'><u>https://themeforest.net/user/spruko/portfolio</u></a></p>", media: "", type: "Travel", typeBg: "secondary", avatarList: [] },
                 { id: 6, avatar: "", img: face9, username: "sonya taylor", date: "02, Dec - 06:32AM", message: "<p class='fs-12 text-muted mb-0'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p><p class='fs-12 text-muted mb-3'>There are many variations of passages &#128079;&#128525;</p>", media: "", type: "Fashion", typeBg: "primary", avatarList: [] },
-            ]
-        };
-    },
-    mounted() {
-        if (!this.lightbox) {
-            this.lightbox = new PhotoSwipeLightbox({
-                gallery: '#RandomUniqueId',
-                children: 'a',
-                pswpModule: () => import('photoswipe'),
-                bgOpacity: 0.8,
-                wheelToZoom: true,
-                zoomTitle: 'Zoom',
-            });
-            this.lightbox.init();
-        }
-    },
-    unmounted() {
-        if (this.lightbox) {
-            this.lightbox.destroy();
-            this.lightbox = null;
-        }
-    },
-};
+]);
+
+// Date dinamice din API
+const profile = ref(null);
+const error = ref<string | null>(null);
+
+// Încărcare profil din API
+onMounted(async () => {
+  try {
+    const response = await userAPI.getProfile();
+    profile.value = response.data;
+    if (response.data.name && !response.data.firstName && !response.data.lastName) {
+      const [firstName, ...lastNameParts] = response.data.name.split(' ');
+      profile.value = {
+        ...response.data,
+        firstName,
+        lastName: lastNameParts.join(' '),
+      };
+    }
+  } catch (err) {
+    error.value = 'Nu s-a putut încărca profilul';
+    console.error(err);
+  }
+
+  // Inițializare PhotoSwipeLightbox
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: '#RandomUniqueId',
+    children: 'a',
+    pswpModule: () => import('photoswipe'),
+    bgOpacity: 0.8,
+    wheelToZoom: true,
+    zoomTitle: 'Zoom',
+  });
+  lightbox.init();
+
+  // Curățare la demontare
+  onUnmounted(() => {
+    lightbox.destroy();
+  });
+});
+
+// Date pentru PageHeader
+const dataToPass = ref({
+  current: 'Profile',
+  list: ['Pages', 'Profile'],
+});
 </script>
 
 <template>
@@ -171,7 +243,7 @@ export default {
     <div class="row">
         <div class="col-xxl-4 col-xl-12">
             <div class="card custom-card overflow-hidden">
-                <div class="card-body p-0">
+                <div class="card-body p-0" v-if="profile">
                     <div class="d-sm-flex align-items-top p-4 border-bottom-0 main-profile-cover">
                         <div>
                             <span class="avatar avatar-xxl avatar-rounded online me-3">
@@ -180,14 +252,14 @@ export default {
                         </div>
                         <div class="flex-fill main-profile-info">
                             <div class="d-flex align-items-center justify-content-between">
-                                <h6 class="fw-semibold mb-1 text-fixed-white">Json Taylor</h6>
+                                <h6 class="fw-semibold mb-1 text-fixed-white">{{ profile.firstName }} {{ profile.lastName }}</h6>
                                 <button class="btn btn-light btn-wave"><i
                                         class="ri-add-line me-1 align-middle"></i>Follow</button>
                             </div>
-                            <p class="mb-1 text-muted text-fixed-white op-7">Chief Executive Officer (C.E.O)</p>
+                            <p class="mb-1 text-muted text-fixed-white op-7">{{ profile.position }}</p>
                             <p class="fs-12 text-fixed-white mb-4 op-5">
                                 <span class="me-3"><i class="ri-building-line me-1 align-middle"></i>Georgia</span>
-                                <span><i class="ri-map-pin-line me-1 align-middle"></i>Washington D.C</span>
+                                <span><i class="ri-map-pin-line me-1 align-middle"></i>{{ profile.address }}</span>
                             </p>
                             <div class="d-flex mb-0">
                                 <div class="me-4">
@@ -220,6 +292,7 @@ export default {
                         </div>
                     </div>
                     <div class="p-4 border-bottom border-block-end-dashed">
+    
                         <p class="fs-15 mb-2 me-4 fw-semibold">Contact Information :</p>
                         <div class="text-muted">
                             <p class="mb-2" v-for="(contact, index) of profileDetails.contactInformation" :key="index">

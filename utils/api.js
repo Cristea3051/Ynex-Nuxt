@@ -107,7 +107,8 @@ export const userAPI = {
   update: (id, userData) => api.put(`/api/users/${id}`, userData),
   delete: (id) => api.delete(`/api/users/${id}`),
   updateProfile: (userData) => api.put('/api/users/profile', userData),
-  changePassword: (passwords) => api.post('/api/users/change-password', passwords)
+  changePassword: (passwords) => api.post('/api/users/change-password', passwords),
+  getProfile: () => api.get('/api/users/me')
 }
 
 // Customer API endpoints (example for CRM)
