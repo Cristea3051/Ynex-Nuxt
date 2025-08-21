@@ -13,7 +13,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt'  // Add this line
   ],
   app: {
     baseURL: '/',
